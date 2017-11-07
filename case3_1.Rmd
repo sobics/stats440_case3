@@ -15,14 +15,23 @@ PHC: indicator for the presence of a public health clinic in the child's village
 #Preliminary Analysis
 
 ```{r include = F}
+library(dplyr)
+library(knitr)
+library(ggplot2)
 #read in the data set
 gambia <-read.csv("gambiaMissing.csv")
 ```
-#Missing Data
-Initial exploratory data analysis reveals that the feature bednet contains missing data for 317 out of the 805.  
+
+#Missing Data: MAR
+Initial exploratory data analysis reveals that the feature bednet contains missing data for 317 out of the 805. To determine whether the data is Missing at Random or Missing Completely at Random, features from the missing dataset were compared in porportion to the features from the original dataset (i.e. $ \frac{GREEN_{missing}}{GREEN_{complete}}$).     
+
 ```{r echo = F}
 attach(gambia)
-table(is.na(BEDNET))
+i <- which(is.na(BEDNET))
+m_gambia <- gambia[i,]
+ggplot(gambia, aes(x = unique(AGE), y = as.vector(table(AGE)))) + geom_line()
+
 
 detach(gambia)
 ```
+The missingness was skewed for any of its features
