@@ -1,7 +1,28 @@
 ---
-title: "Case3_1"
+title: "Case3 Part 1: Missing Data"
 author: "Sonia Xu"
 date: "November 6, 2017"
 output: html_document
 ---
 
+<!-- The data come from a study of malaria prevalence in Gambia. Each observation corresponds to one child who has been tested for the presence of malaria. The response Y is an indicator of whether malaria parasites were found in a blood sample from the child. The predictors are
+
+AGE: age of the child, in years
+BEDNET: indicator of whether the child has a net over his or her bed (1 = yes)
+GREEN: a measure of how much greenery is around the child's village, derived from satellite images (units are arbitrary)
+PHC: indicator for the presence of a public health clinic in the child's village (1 = yes)-->
+
+#Preliminary Analysis
+
+```{r include = F}
+#read in the data set
+gambia <-read.csv("gambiaMissing.csv")
+```
+#Missing Data
+Initial exploratory data analysis reveals that the feature bednet contains missing data for 317 out of the 805.  
+```{r echo = F}
+attach(gambia)
+table(is.na(BEDNET))
+
+detach(gambia)
+```
