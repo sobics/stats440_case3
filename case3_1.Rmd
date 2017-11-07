@@ -13,7 +13,7 @@ GREEN: a measure of how much greenery is around the child's village, derived fro
 PHC: indicator for the presence of a public health clinic in the child's village (1 = yes)-->
 
 #Preliminary Analysis
-
+Preliminary analysis shows that the missing data is Missing at Random. Exploring the relationships between the features shows that 
 ```{r include = F}
 library(dplyr)
 library(knitr)
@@ -23,15 +23,28 @@ gambia <-read.csv("gambiaMissing.csv")
 ```
 
 #Missing Data: MAR
-Initial exploratory data analysis reveals that the feature bednet contains missing data for 317 out of the 805. To determine whether the data is Missing at Random or Missing Completely at Random, features from the missing dataset were compared in porportion to the features from the original dataset (i.e. $ \frac{GREEN_{missing}}{GREEN_{complete}}$).     
+Initial exploratory data analysis reveals that the feature bednet contains missing data for 317 out of the 805 observations. To determine whether the data is Missing at Random or Missing Completely at Random, features from the missing dataset were compared in porportion to the features from the original dataset via quantiles. If the dataset were Missing Completely at Random, the quantiles would match for each feature. However, as the table of quantiles below shows, the missing dataset does not match in quantiles for the features $Age$ and $PHC$.
 
 ```{r echo = F}
 attach(gambia)
 i <- which(is.na(BEDNET))
 m_gambia <- gambia[i,]
 ggplot(gambia, aes(x = unique(AGE), y = as.vector(table(AGE)))) + geom_line()
-
-
+Feature <- c("Missing Age", "Age", "Missing Green", "Green", "Missing PHC", "PHC")
+quant_tab <- cbind(Feature, rbind(quantile(m_gambia$AGE), quantile(AGE), quantile(m_gambia$GREEN), quantile(GREEN), quantile(m_gambia$PHC), quantile(PHC)))
+kable(quant_tab)
 detach(gambia)
 ```
-The missingness was skewed for any of its features
+
+#Correlation Exploration
+```{r echo = F}
+pairs(m_gambia)
+cor(gambia[-i,]) #index i can be found in my code
+```
+Visually looking at the correlation plots for each of the features from the non-missing data, none of the features appear highly correlated. When comparing the correlation matrix, the largest correlations are between the features, $PHC$ and $GREEN$ (-0.221) and PHC and $BEDNET$ (0.291). Similarly, looking at the missing data, the largest correlation is between $PHC$ and $GREEN$ (-0.137).   
+
+#Relationship Between PHC and GREEN
+```{r}
+```
+
+#Next Steps

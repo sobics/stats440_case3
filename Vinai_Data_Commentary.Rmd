@@ -43,7 +43,14 @@ cor(gambia$AGE, gambia$PHC)
 
 ```
 --->
+
+I added the below part about correlations in my write-up after reading yours!! check it out
 #this may be better/more succinct that manually calculating correlations? -sonia
 ```{r}
-pairs(gambia)
+pairs(m_gambia)
+
+#or
+
+cor(gambia[-i,]) #index i can be found in my code
 ```
+Visually looking at the correlation plots for each of the features from the non-missing data, none of the features appear highly correlated. When comparing the correlation matrix, the largest correlations are between the features, PHC and Green (-0.221) and PHC and Bednet (0.291). Similarly, looking at the missing data, the largest correlation is between PHC and Green (-0.137).   
