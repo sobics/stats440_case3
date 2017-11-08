@@ -13,7 +13,7 @@ GREEN: a measure of how much greenery is around the child's village, derived fro
 PHC: indicator for the presence of a public health clinic in the child's village (1 = yes)-->
 
 #Preliminary Analysis
-Preliminary analysis shows that the missing data is Missing at Random. Exploring the relationships between the features shows that 
+Preliminary analysis shows that the missing data is Missing at Random. Exploring the relationships between the features shows that $PHC$ and $GREEN$ are the most correlated. 
 ```{r include = F}
 library(dplyr)
 library(knitr)
@@ -45,6 +45,7 @@ Visually looking at the correlation plots for each of the features from the non-
 
 #Relationship Between PHC and GREEN
 ```{r}
+ggplot(gambia[-i,], aes(x=factor(PHC), y = factor(GREEN), color = factor(GREEN), size = 5)) + geom_point() + ggtitle("PHC ")
 ```
 
 #Next Steps
