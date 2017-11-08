@@ -75,3 +75,6 @@ In terms of imputating the missing data, we plan on clustering the data set on i
 
 ##Predicting the Presence of Malaria
 The presence of malaria is a binary response, so we plan on using a logit model to fit the final dataset.   
+
+Since we plan to build a predictive model, we plan to separate our data into a
+training set and a test set. This will help us test the validity of our model.   
