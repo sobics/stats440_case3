@@ -67,7 +67,7 @@ Visually looking at the correlation plots for each of the features from the non-
 Looking at the plot below, observations that live near green space measurements of 28.85, 33.65, or 47.65 are more likely to live close to a public health center, whereas obersevations that live near green space measurements of 40.1 or 40.85 do not. Perhaps, green spaces of 40.1/40.85 units are not close to the city, so they are further away from public health centers.
 
 ```{r echo = F}
-ggplot(gambia[-i,], aes(x=factor(PHC), y = factor(GREEN), color = factor(GREEN), size = 5)) + geom_point() + ggtitle("PHC vs. GREEN") + theme(legend.position="none") + xlab("PHC") + ylab("GREEN") 
+ggplot(gambia[-i,], aes(x=factor(PHC), y = factor(GREEN), color = factor(GREEN), size = 5)) + geom_point() + ggtitle("PHC vs. GREEN", subtitle = "Different colors represent different sizes of green spaces") + theme(legend.position="none") + xlab("PHC") + ylab("GREEN") 
 ```
 
 #Next Steps
