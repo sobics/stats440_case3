@@ -48,3 +48,12 @@ Visually looking at the correlation plots for each of the features from the non-
 ```
 
 #Next Steps
+Future plans include exploring different models that can: 
+1. Imputate the missing data
+2. Predict the presence of malaria   
+
+##Imputating the Missing Data
+In terms of imputating the missing data, we plan on clustering the data set on its other features via k-means, and then using these groups to predict $BEDNET$.
+
+##Predicting the Presence of Malaria
+The presence of malaria is a binary response, so we plan on using a logit model to fit the final dataset.  
