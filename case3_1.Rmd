@@ -21,6 +21,15 @@ library(ggplot2)
 #read in the data set
 gambia <-read.csv("gambiaMissing.csv")
 ```
+#Dataset
+The data set is relatively simple. The response variable we intend to predict is labeled $Y$ and records whether or not malaria was present in a patient's blood, with 1 being yes and 0 being no. $Age$ denotes the age of the subject. The ages were distributed across the values 1, 2, 3, and 4. Given the discrete nature of these levels, we plan to treat $Age$ as a categorical variable. The subjects were distributed roughly uniform in age, with the most frequent being 1. The table below displays the distribution.
+$PHC$ and $BEDNET$ are binary variables; $PHC$ records whether or not a public health center is nearby, and $BEDNET$ records whether or not a mosquito net was present on the child's bed at home. 
+
+$GREEN$ is a variable that shows the percentage of greenery around the child's home. In our sample, it has 5 distinct levels, with the factor 40.85 as the most frequently occurring level. The table below shows the distribution.
+
+```{r}
+table(gambia$GREEN) %>% as.data.frame() %>% kable()
+```
 
 #Missing Data: MAR
 Initial exploratory data analysis reveals that the feature bednet contains missing data for 317 out of the 805 observations. To determine whether the data is Missing at Random or Missing Completely at Random, features from the missing dataset were compared in porportion to the features from the original dataset via quantiles. If the dataset were Missing Completely at Random, the quantiles would match for each feature. However, as the table of quantiles below shows, the missing dataset does not match in quantiles for the features $Age$ and $PHC$.
