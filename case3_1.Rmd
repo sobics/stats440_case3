@@ -21,8 +21,8 @@ library(ggplot2)
 #read in the data set
 gambia <-read.csv("gambiaMissing.csv")
 ```
-#Dataset
 
+#Dataset
 The data set is relatively simple. The response variable we intend to predict is labeled $Y$ and records whether or not malaria was present in a patient's blood, with 1 being yes and 0 being no. $Age$ denotes the age of the subject. The ages were distributed across the values 1, 2, 3, and 4. Given the discrete nature of these levels, we plan to treat $Age$ as a categorical variable. The subjects were distributed roughly uniform in age, with the most frequent being 1. The table below displays the distribution.
 $PHC$ and $BEDNET$ are binary variables; $PHC$ records whether or not a public health center is nearby, and $BEDNET$ records whether or not a mosquito net was present on the child's bed at home. 
 
@@ -54,8 +54,10 @@ cor(gambia[-i,]) #index i can be found in my code
 Visually looking at the correlation plots for each of the features from the non-missing data, none of the features appear highly correlated. When comparing the correlation matrix, the largest correlations are between the features, $PHC$ and $GREEN$ (-0.221) and PHC and $BEDNET$ (0.291). Similarly, looking at the missing data, the largest correlation is between $PHC$ and $GREEN$ (-0.137).   
 
 #Relationship Between PHC and GREEN
+
+Looking at the plot below, observations that live near green space measurements of 28.85, 33.65, or 47.65 are more likely to live close to a public health center, whereas obersevations that live near green space measurements of 40.1 or 40.85 do not. Perhaps, green spaces of 40.1/40.85 units are not close to the city, so they are further away from public health centers.
 ```{r}
-ggplot(gambia[-i,], aes(x=factor(PHC), y = factor(GREEN), color = factor(GREEN), size = 5)) + geom_point() + ggtitle("PHC ")
+ggplot(gambia[-i,], aes(x=factor(PHC), y = factor(GREEN), color = factor(GREEN), size = 5)) + geom_point() + ggtitle("PHC vs. GREEN") + theme(legend.position="none") + xlab("PHC") + ylab("GREEN") 
 ```
 
 #Next Steps
