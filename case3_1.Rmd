@@ -1,8 +1,10 @@
 ---
-title: "Case3 Part 1: Missing Data"
-author: "Sonia Xu"
+title: 'Case3 Part 1: Missing Data'
+author: "Sonia Xu & Vinai Oddiraju"
 date: "November 6, 2017"
-output: html_document
+output:
+  pdf_document: default
+  html_document: default
 ---
 
 <!-- The data come from a study of malaria prevalence in Gambia. Each observation corresponds to one child who has been tested for the presence of malaria. The response Y is an indicator of whether malaria parasites were found in a blood sample from the child. The predictors are
@@ -15,6 +17,7 @@ PHC: indicator for the presence of a public health clinic in the child's village
 #Preliminary Analysis
 Preliminary analysis shows that the missing data is Missing at Random. Exploring the relationships between the features shows that $PHC$ and $GREEN$ are the most correlated. 
 ```{r include = F}
+knitr::opts_chunk$set(fig.width=5, fig.height=3) 
 library(dplyr)
 library(knitr)
 library(ggplot2)
@@ -24,7 +27,7 @@ gambia <-read.csv("gambiaMissing.csv")
 
 #Dataset
 The dataset is relatively simple. The response variable is labeled $Y$ and records whether or not malaria was present in a patient's blood, with 1 being yes and 0 being no. $Age$ denotes the age of the subject. The ages were distributed across the values 1, 2, 3, and 4. Given the discrete nature of these levels, we plan to treat $Age$ as a categorical variable. The subjects were distributed uniformly in age, with the most frequent factor being 1. The table below displays the distribution.
-```{r}
+```{r echo = F}
 table(gambia$AGE) %>% as.data.frame() %>% kable()
 ```
 
@@ -33,7 +36,7 @@ $PHC$ and $BEDNET$ are binary variables; $PHC$ records whether or not a public h
 
 $GREEN$ is a variable that shows the percentage of greenery around the child's home. In our sample, it has 5 distinct levels, with the factor 40.85 as the most frequently occurring level. The table below shows the distribution.
 
-```{r}
+```{r echo = F}
 table(gambia$GREEN) %>% as.data.frame() %>% kable()
 ```
 
@@ -44,7 +47,6 @@ Initial exploratory data analysis reveals that the feature bednet contains missi
 attach(gambia)
 i <- which(is.na(BEDNET))
 m_gambia <- gambia[i,]
-ggplot(gambia, aes(x = unique(AGE), y = as.vector(table(AGE)))) + geom_line()
 Feature <- c("Missing Age", "Age", "Missing Green", "Green", "Missing PHC", "PHC")
 quant_tab <- cbind(Feature, rbind(quantile(m_gambia$AGE), quantile(AGE), quantile(m_gambia$GREEN), quantile(GREEN), quantile(m_gambia$PHC), quantile(PHC)))
 kable(quant_tab)
@@ -53,14 +55,17 @@ detach(gambia)
 
 #Correlation Exploration
 ```{r echo = F}
-pairs(m_gambia)
-cor(gambia[-i,]) #index i can be found in my code
+pairs(gambia)
+
+kable(cor(gambia[-i,])) #index i can be found in my code
 ```
+
 Visually looking at the correlation plots for each of the features from the non-missing data, none of the features appear highly correlated. When comparing the correlation matrix, the largest correlations are between the features, $PHC$ and $GREEN$ (-0.221) and PHC and $BEDNET$ (0.291). Similarly, looking at the missing data, the largest correlation is between $PHC$ and $GREEN$ (-0.137).   
 
 #Relationship Between PHC and GREEN
 
 Looking at the plot below, observations that live near green space measurements of 28.85, 33.65, or 47.65 are more likely to live close to a public health center, whereas obersevations that live near green space measurements of 40.1 or 40.85 do not. Perhaps, green spaces of 40.1/40.85 units are not close to the city, so they are further away from public health centers.
+
 ```{r echo = F}
 ggplot(gambia[-i,], aes(x=factor(PHC), y = factor(GREEN), color = factor(GREEN), size = 5)) + geom_point() + ggtitle("PHC vs. GREEN") + theme(legend.position="none") + xlab("PHC") + ylab("GREEN") 
 ```
