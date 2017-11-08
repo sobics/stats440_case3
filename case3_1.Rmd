@@ -22,6 +22,7 @@ library(ggplot2)
 gambia <-read.csv("gambiaMissing.csv")
 ```
 #Dataset
+
 The data set is relatively simple. The response variable we intend to predict is labeled $Y$ and records whether or not malaria was present in a patient's blood, with 1 being yes and 0 being no. $Age$ denotes the age of the subject. The ages were distributed across the values 1, 2, 3, and 4. Given the discrete nature of these levels, we plan to treat $Age$ as a categorical variable. The subjects were distributed roughly uniform in age, with the most frequent being 1. The table below displays the distribution.
 $PHC$ and $BEDNET$ are binary variables; $PHC$ records whether or not a public health center is nearby, and $BEDNET$ records whether or not a mosquito net was present on the child's bed at home. 
 
