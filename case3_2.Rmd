@@ -1,0 +1,9 @@
+---
+title: "case3_2"
+author: "Sonia Xu"
+date: "November 13, 2017"
+output: html_document
+---
+
+```{r}
+```
