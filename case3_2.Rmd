@@ -6,12 +6,19 @@ output: html_document
 ---
 <!-- Week 3: Report #2 on the case study is due. This report will go significantly beyond report #1 to include initial results for different methods that were considered to analyze the data, as well as a detailed description for how the analysis was conducted and problems that arose.  The report should be well written, clear and concise while not omitting relevant details.  The roles of the authors should be described.  Class time will again be devoted to lecturing on statistical approaches relevant to the case study.--->
 
-```{r include = F}
+```{r include = F, warning = F}
 knitr::opts_chunk$set(fig.width=5, fig.height=3) 
 library(mice)
 library(dplyr)
 library(knitr)
 library(ggplot2)
+library(cluster)
 #read in the data set
 gambia <-read.csv("gambiaMissing.csv")
 ```
+
+#Clustering Data and Imputating Based on Similar Characteristics
+```{r}
+g_cluster <- kmeans(gambia[,-3], 11, nstart = 20)
+```
+
