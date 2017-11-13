@@ -1,6 +1,6 @@
 ---
 title: "case3_2"
-author: "Sonia Xu"
+author: "Sonia Xu, Vinai Oddiraju"
 date: "November 13, 2017"
 output: html_document
 ---
