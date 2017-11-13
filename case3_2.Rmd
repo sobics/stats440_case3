@@ -48,43 +48,49 @@ Bednet_Imputations = FirstRun$imp$BEDNET #Get the imputed columns
 #Impute data, fit model, generate parameter estimates 
 
 ```{r}
-#Append imputed columns to the gambia data set
-gambia$Imp1 = gambia$BEDNET
-gambia$Imp1[-ind] = Bednet_Imputations[,1]
-
-gambia$Imp2 = gambia$BEDNET
-gambia$Imp2[-ind] = Bednet_Imputations[,2]
-
-gambia$Imp3 = gambia$BEDNET
-gambia$Imp3[-ind] = Bednet_Imputations[,3]
-
-gambia$Imp4 = gambia$BEDNET
-gambia$Imp4[-ind] = Bednet_Imputations[,4]
-
-gambia$Imp5 = gambia$BEDNET
-gambia$Imp5[-ind] = Bednet_Imputations[,5]
-
-
-#Split into training and test
-training = sample_frac(gambia, .7) #Split into a training
-training_samp = as.numeric(row.names(training))
-test = gambia[-training_samp, ] #Get the test set
-#Construct 5 models on the training data
-TrM1 = glm(data = training, Y ~ AGE + GREEN + PHC + Imp1, family = "binomial")
-TrM2 = glm(data = training, Y ~ AGE + GREEN + PHC + Imp2, family = "binomial")
-TrM3 = glm(data = training, Y ~ AGE + GREEN + PHC + Imp3, family = "binomial")
-TrM4 = glm(data = training, Y ~ AGE + GREEN + PHC + Imp4, family = "binomial")
-TrM5 = glm(data = training, Y ~ AGE + GREEN + PHC + Imp5, family = "binomial")
-
-#Need to predict
-pred.val.1 = round(predict(TrM1, test, type = "response"))
-pred.val.2 = round(predict(TrM2, test, type = "response"))
-pred.val.3 = round(predict(TrM3, test, type = "response"))
-pred.val.4 = round(predict(TrM4, test, type = "response"))
-pred.val.5 = round(predict(TrM5, test, type = "response"))
-
+TEST_ACCURACY <- NULL
+for(i in 1:100) {
+  FirstRun = mice(data = gambia, m = 5, meth = "pmm", maxit = 5, printFlag = F) #First imputation
+  Bednet_Imputations = FirstRun$imp$BEDNET
+  #Append imputed columns to the gambia data set
+  gambia$Imp1 = gambia$BEDNET
+  gambia$Imp1[-ind] = Bednet_Imputations[,1]
+  
+  gambia$Imp2 = gambia$BEDNET
+  gambia$Imp2[-ind] = Bednet_Imputations[,2]
+  
+  gambia$Imp3 = gambia$BEDNET
+  gambia$Imp3[-ind] = Bednet_Imputations[,3]
+  
+  gambia$Imp4 = gambia$BEDNET
+  gambia$Imp4[-ind] = Bednet_Imputations[,4]
+  
+  gambia$Imp5 = gambia$BEDNET
+  gambia$Imp5[-ind] = Bednet_Imputations[,5]
+  
+  
+  #Split into training and test
+  training = sample_frac(gambia, .7) #Split into a training
+  training_samp = as.numeric(row.names(training))
+  test = gambia[-training_samp, ] #Get the test set
+  #Construct 5 models on the training data
+  TrM1 = glm(data = training, Y ~ AGE + GREEN + PHC + Imp1, family = "binomial")
+  TrM2 = glm(data = training, Y ~ AGE + GREEN + PHC + Imp2, family = "binomial")
+  TrM3 = glm(data = training, Y ~ AGE + GREEN + PHC + Imp3, family = "binomial")
+  TrM4 = glm(data = training, Y ~ AGE + GREEN + PHC + Imp4, family = "binomial")
+  TrM5 = glm(data = training, Y ~ AGE + GREEN + PHC + Imp5, family = "binomial")
+  
+  #Need to predict
+  pred.val.1 = round(predict(TrM1, test, type = "response"))
+  pred.val.2 = round(predict(TrM2, test, type = "response"))
+  pred.val.3 = round(predict(TrM3, test, type = "response"))
+  pred.val.4 = round(predict(TrM4, test, type = "response"))
+  pred.val.5 = round(predict(TrM5, test, type = "response"))
+  
+  y_true <- test$Y
+  TEST_ACCURACY <- rbind(TEST_ACCURACY, c(mean(y_true == pred.val.1), mean(y_true == pred.val.2), mean(y_true == pred.val.3), mean(y_true == pred.val.4), mean(y_true == pred.val.5)))  
+}
 #test accuracy
-mean(test$y == pred.val.1)
 ```
 
 
