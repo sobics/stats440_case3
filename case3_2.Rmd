@@ -91,6 +91,7 @@ for(i in 1:100) {
   TEST_ACCURACY <- rbind(TEST_ACCURACY, c(mean(y_true == pred.val.1), mean(y_true == pred.val.2), mean(y_true == pred.val.3), mean(y_true == pred.val.4), mean(y_true == pred.val.5)))  
 }
 #test accuracy
+apply(TEST_ACCURACY, 2, mean)
 ```
 
 
