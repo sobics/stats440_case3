@@ -17,6 +17,7 @@ library(cluster)
 gambia <-read.csv("gambiaMissing.csv")
 ```
 #Overview
+Before creating a robust model that predicts the presence of malaria in child's blood stream, it is important to imputate the missing data well. Two different methods in missing were tested (Clustering & MICE) and compared to assess the best way to imputate the missing data. Below is an overview of each method: 
 
 #Clustering Data and Imputating Missing Data Based on Similar Characteristics
 
@@ -29,9 +30,8 @@ gambia <- gambia %>% group_by(clust) %>% mutate(impBEDNET = as.numeric((mean(BED
 ind = which(!is.na(gambia$BEDNET))
 ```
 
-
-
-
+#Assessing Missing Data Imputation Method
+To assess the fit of the missing data clusters, the true values of the non-missing $BEDNET$ observations were compared to the predicted values of $BEDNET$ obtained from the clusters. The clusters labeled the correct $BEDNET$ value `r round(mean(gambia$BEDNET[ind] == gambia$impBEDNET[ind]) *100,2)`% of the time.   
 
 #Using "mice" Package to Impute Data
 ```{r}
@@ -41,7 +41,7 @@ for (col in 1:ncol(gambia)){
   print(sum(is.na(gambia[, col]))/nrow(gambia))
 }
 md.pattern(gambia)
-FirstRun = mice(data = gambia, m = 5, meth = "pmm", maxit = 5) #First imputation
+FirstRun = mice(data = gambia, m = 5, meth = "pmm", maxit = 5, printFlag = F) #First imputation
 Bednet_Imputations = FirstRun$imp$BEDNET #Get the imputed columns
 ```
 
@@ -50,8 +50,19 @@ Bednet_Imputations = FirstRun$imp$BEDNET #Get the imputed columns
 ```{r}
 #Append imputed columns to the gambia data set
 gambia$Imp1 = gambia$BEDNET
-gambia$Imp1[is.na(gambia$Imp1)] = Bednet_Imputations[,1]
-#gambia$Imp1 = c(Bednet_Imputations[, 1], gambia[318:805, 3])
+gambia$Imp1[-ind] = Bednet_Imputations[,1]
+
+gambia$Imp2 = gambia$BEDNET
+gambia$Imp2[-ind] = Bednet_Imputations[,2]
+
+gambia$Imp3 = gambia$BEDNET
+gambia$Imp3[-ind] = Bednet_Imputations[,3]
+
+gambia$Imp4 = gambia$BEDNET
+gambia$Imp4[-ind] = Bednet_Imputations[,4]
+
+gambia$Imp5 = gambia$BEDNET
+gambia$Imp5[-ind] = Bednet_Imputations[,5]
 
 gambia$Imp2 = gambia$BEDNET
 gambia$Imp2[is.na(gambia$Imp2)] = Bednet_Imputations[, 2]
@@ -91,9 +102,15 @@ for (i in 1:length(Pred)){
 }
 
 #Need to predict
+pred.val.1 = round(predict(TrM1, test, type = "response"))
+pred.val.2 = round(predict(TrM2, test, type = "response"))
+pred.val.3 = round(predict(TrM3, test, type = "response"))
+pred.val.4 = round(predict(TrM4, test, type = "response"))
+pred.val.5 = round(predict(TrM5, test, type = "response"))
+
+#test accuracy
+mean(test$y == pred.val.1)
 ```
 
-#Assessing Missing Data Imputation Method
-To assess the fit of the missing data clusters, the true values of the non-missing $BEDNET$ observations were compared to the predicted values of $BEDNET$ obtained from the clusters. The clusters labeled the correct $BEDNET$ value `r round(mean(gambia$BEDNET[ind] == gambia$impBEDNET[ind]) *100,2)`% of the time.   
 
 
