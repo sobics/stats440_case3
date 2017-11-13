@@ -53,10 +53,23 @@ gambia$Imp1 = gambia$BEDNET
 gambia$Imp1[is.na(gambia$Imp1)] = Bednet_Imputations[,1]
 #gambia$Imp1 = c(Bednet_Imputations[, 1], gambia[318:805, 3])
 
-gambia$Imp2 = c(Bednet_Imputations[, 2], gambia[318:805, 3])
-gambia$Imp3 = c(Bednet_Imputations[, 3], gambia[318:805, 3])
-gambia$Imp4 = c(Bednet_Imputations[, 4], gambia[318:805, 3])
-gambia$Imp5 = c(Bednet_Imputations[, 5], gambia[318:805, 3])
+gambia$Imp2 = gambia$BEDNET
+gambia$Imp2[is.na(gambia$Imp2)] = Bednet_Imputations[, 2]
+#gambia$Imp2 = c(Bednet_Imputations[, 2], gambia[318:805, 3])
+#gambia$Imp3 = c(Bednet_Imputations[, 3], gambia[318:805, 3])
+#gambia$Imp4 = c(Bednet_Imputations[, 4], gambia[318:805, 3])
+#gambia$Imp5 = c(Bednet_Imputations[, 5], gambia[318:805, 3])
+
+gambia$Imp3 = gambia$BEDNET
+gambia$Imp3[is.na(gambia$Imp3)] = Bednet_Imputations[, 3]
+
+gambia$Imp4 = gambia$BEDNET
+gambia$Imp4[is.na(gambia$Imp4)] = Bednet_Imputations[, 4]
+
+gambia$Imp5 = gambia$BEDNET
+gambia$Imp5[is.na(gambia$Imp5)] = Bednet_Imputations[, 5]
+
+
 
 #Split into training and test
 training = sample_frac(gambia, .7) #Split into a training
@@ -68,6 +81,14 @@ TrM2 = glm(data = training, Y ~ AGE + GREEN + PHC + Imp2, family = "binomial")
 TrM3 = glm(data = training, Y ~ AGE + GREEN + PHC + Imp3, family = "binomial")
 TrM4 = glm(data = training, Y ~ AGE + GREEN + PHC + Imp4, family = "binomial")
 TrM5 = glm(data = training, Y ~ AGE + GREEN + PHC + Imp5, family = "binomial")
+
+for (i in 1:length(Pred)){
+  if (Pred[i] < .5){
+    Pred[i] = 0
+  } else{
+    Pred[i] = 1
+  }
+}
 
 #Need to predict
 ```
