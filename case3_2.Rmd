@@ -49,6 +49,7 @@ Bednet_Imputations = FirstRun$imp$BEDNET #Get the imputed columns
 
 ```{r}
 #Append imputed columns to the gambia data set
+<<<<<<< HEAD
 
 gambia <- gambia %>% mutate(bed_imp = ifelse(is.na(BEDNET), Bednet_Imputations, BEDNET))
 temp <- NULL
@@ -58,6 +59,12 @@ gambia <- gambia %>% mutate(BEDNET_MICE_IMP1 = ifelse(is.na(BEDNET_MICE_IMP1), B
 
                             
 gambia$Imp1 = rbind(Bednet_Imputations$`1`, gambia)
+=======
+gambia$Imp1 = gambia$BEDNET
+gambia$Imp1[is.na(gambia$Imp1)] = Bednet_Imputations[,1]
+#gambia$Imp1 = c(Bednet_Imputations[, 1], gambia[318:805, 3])
+
+>>>>>>> 58d5fbfa5ddce854e75166498342704c79e5c087
 gambia$Imp2 = c(Bednet_Imputations[, 2], gambia[318:805, 3])
 gambia$Imp3 = c(Bednet_Imputations[, 3], gambia[318:805, 3])
 gambia$Imp4 = c(Bednet_Imputations[, 4], gambia[318:805, 3])
