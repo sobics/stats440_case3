@@ -49,26 +49,21 @@ Bednet_Imputations = FirstRun$imp$BEDNET #Get the imputed columns
 
 ```{r}
 #Append imputed columns to the gambia data set
-<<<<<<< HEAD
-
-gambia <- gambia %>% mutate(bed_imp = ifelse(is.na(BEDNET), Bednet_Imputations, BEDNET))
-temp <- NULL
-temp[-ind] =  Bednet_Imputations$`1`
-temo[ind]
-gambia <- gambia %>% mutate(BEDNET_MICE_IMP1 = ifelse(is.na(BEDNET_MICE_IMP1), BEDNET, BEDNET_MICE_IMP1))
-
-                            
-gambia$Imp1 = rbind(Bednet_Imputations$`1`, gambia)
-=======
 gambia$Imp1 = gambia$BEDNET
-gambia$Imp1[is.na(gambia$Imp1)] = Bednet_Imputations[,1]
-#gambia$Imp1 = c(Bednet_Imputations[, 1], gambia[318:805, 3])
+gambia$Imp1[-ind] = Bednet_Imputations[,1]
 
->>>>>>> 58d5fbfa5ddce854e75166498342704c79e5c087
-gambia$Imp2 = c(Bednet_Imputations[, 2], gambia[318:805, 3])
-gambia$Imp3 = c(Bednet_Imputations[, 3], gambia[318:805, 3])
-gambia$Imp4 = c(Bednet_Imputations[, 4], gambia[318:805, 3])
-gambia$Imp5 = c(Bednet_Imputations[, 5], gambia[318:805, 3])
+gambia$Imp2 = gambia$BEDNET
+gambia$Imp2[-ind] = Bednet_Imputations[,2]
+
+gambia$Imp3 = gambia$BEDNET
+gambia$Imp3[-ind] = Bednet_Imputations[,3]
+
+gambia$Imp4 = gambia$BEDNET
+gambia$Imp4[-ind] = Bednet_Imputations[,4]
+
+gambia$Imp5 = gambia$BEDNET
+gambia$Imp5[-ind] = Bednet_Imputations[,5]
+
 
 #Split into training and test
 training = sample_frac(gambia, .7) #Split into a training
@@ -82,6 +77,14 @@ TrM4 = glm(data = training, Y ~ AGE + GREEN + PHC + Imp4, family = "binomial")
 TrM5 = glm(data = training, Y ~ AGE + GREEN + PHC + Imp5, family = "binomial")
 
 #Need to predict
+pred.val.1 = round(predict(TrM1, test, type = "response"))
+pred.val.2 = round(predict(TrM2, test, type = "response"))
+pred.val.3 = round(predict(TrM3, test, type = "response"))
+pred.val.4 = round(predict(TrM4, test, type = "response"))
+pred.val.5 = round(predict(TrM5, test, type = "response"))
+
+#test accuracy
+mean(test$y == pred.val.1)
 ```
 
 
