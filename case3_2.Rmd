@@ -88,11 +88,11 @@ for(i in 1:100) {
   pred.val.5 = round(predict(TrM5, test, type = "response"))
   
   y_true <- test$Y
-  TEST_ACCURACY <- rbind(TEST_ACCURACY, c(mean(y_true == pred.val.1), mean(y_true == pred.val.2), mean(y_true == pred.val.3), mean(y_true == pred.val.4), mean(y_true == pred.val.5)))  
+TEST_ACCURACY <- rbind(TEST_ACCURACY, c(mean(y_true == pred.val.1), mean(y_true == pred.val.2), mean(y_true == pred.val.3), mean(y_true == pred.val.4), mean(y_true == pred.val.5)))  
 }
 
 apply(TEST_ACCURACY, 2, mean)
 ```
 
-
+For this stage of the project, we wanted to formulate a method 
 
