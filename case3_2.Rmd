@@ -22,3 +22,42 @@ gambia <-read.csv("gambiaMissing.csv")
 g_cluster <- kmeans(gambia[,-3], 11, nstart = 20)
 ```
 
+
+
+
+#Using "mice" Package to Impute Data
+```{r}
+sum(is.na(gambia$BEDNET))/nrow(gambia) #More diagnostics; just checking missing
+#data 
+for (col in 1:ncol(gambia)){
+  print(sum(is.na(gambia[, col]))/nrow(gambia))
+}
+md.pattern(gambia)
+FirstRun = mice(data = gambia, m = 5, meth = "pmm", maxit = 5) #First imputation
+Bednet_Imputations = FirstRun$imp$BEDNET #Get the imputed columns
+```
+
+#Impute data, fit model, generate parameter estimates 
+
+```{r}
+#Append imputed columns to the gambia data set
+gambia$Imp1 = c(Bednet_Imputations[, 1], gambia[318:805, 3])
+gambia$Imp2 = c(Bednet_Imputations[, 2], gambia[318:805, 3])
+gambia$Imp3 = c(Bednet_Imputations[, 3], gambia[318:805, 3])
+gambia$Imp4 = c(Bednet_Imputations[, 4], gambia[318:805, 3])
+gambia$Imp5 = c(Bednet_Imputations[, 5], gambia[318:805, 3])
+
+#Split into training and test
+training = sample_frac(gambia, .7) #Split into a training
+training_samp = as.numeric(row.names(training))
+test = gambia[-training_samp, ] #Get the test set
+#Construct 5 models on the training data
+TrM1 = glm(data = training, Y ~ AGE + GREEN + PHC + Imp1, family = "binomial")
+TrM2 = glm(data = training, Y ~ AGE + GREEN + PHC + Imp2, family = "binomial")
+TrM3 = glm(data = training, Y ~ AGE + GREEN + PHC + Imp3, family = "binomial")
+TrM4 = glm(data = training, Y ~ AGE + GREEN + PHC + Imp4, family = "binomial")
+TrM5 = glm(data = training, Y ~ AGE + GREEN + PHC + Imp5, family = "binomial")
+
+#Need to predict
+```
+
