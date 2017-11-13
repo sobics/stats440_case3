@@ -16,9 +16,19 @@ library(cluster)
 #read in the data set
 gambia <-read.csv("gambiaMissing.csv")
 ```
+#Overview
 
-#Clustering Data and Imputating Based on Similar Characteristics
-```{r}
-g_cluster <- kmeans(gambia[,-3], 11, nstart = 20)
+#Clustering Data and Imputating Missing Data Based on Similar Characteristics
+
+To fill in the missing data in $BEDNET$, it is assumed that children who share similar features have a simlar $BEDNET$ history. Each observation was thus clustered on their other features (i.e. $GREEN$), and separated into groups via k-means clustering with 11 groups. 11 groups were chosen because this was the highest number of groups that maintained at least 30 observations for each group, which would ensure a large enough sample size for estimation. Missing $BEDNET$ observations were imputated with the mean of each cluster.    
+
+```{r echo = F}
+g_cluster <- kmeans(gambia[,-c(1,3)], 11, nstart = 20)
+gambia$clust <- g_cluster$cluster #add a column with clusters
+gambia <- gambia %>% group_by(clust) %>% mutate(impBEDNET = as.numeric((mean(BEDNET, na.rm = T) > 0.5))) %>% mutate(impBEDNET_combine = ifelse(is.na(BEDNET), as.numeric((mean(BEDNET, na.rm = T) > 0.5)), BEDNET))
+ind = which(!is.na(gambia$BEDNET))
 ```
+
+#Assessing Missing Data Imputation Method
+To assess the fit of the missing data clusters, the true values of the non-missing $BEDNET$ observations were compared to the predicted values of $BEDNET$ obtained from the clusters. The clusters labeled the correct $BEDNET$ value `r round(mean(gambia$BEDNET[ind] == gambia$impBEDNET[ind]) *100,2)`% of the time.   
 
