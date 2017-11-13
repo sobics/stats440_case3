@@ -49,7 +49,10 @@ Bednet_Imputations = FirstRun$imp$BEDNET #Get the imputed columns
 
 ```{r}
 #Append imputed columns to the gambia data set
-gambia$Imp1 = c(Bednet_Imputations[, 1], gambia[318:805, 3])
+gambia$Imp1 = gambia$BEDNET
+gambia$Imp1[is.na(gambia$Imp1)] = Bednet_Imputations[,1]
+#gambia$Imp1 = c(Bednet_Imputations[, 1], gambia[318:805, 3])
+
 gambia$Imp2 = c(Bednet_Imputations[, 2], gambia[318:805, 3])
 gambia$Imp3 = c(Bednet_Imputations[, 3], gambia[318:805, 3])
 gambia$Imp4 = c(Bednet_Imputations[, 4], gambia[318:805, 3])
