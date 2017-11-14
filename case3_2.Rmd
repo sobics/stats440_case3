@@ -111,5 +111,53 @@ TEST_ACCURACY <- rbind(TEST_ACCURACY, c(mean(y_true == pred.val.1), mean(y_true 
 apply(TEST_ACCURACY, 2, mean)
 ```
 
-For this stage of the project, we wanted to formulate a method 
+```{r}
+TEST_ACCURACY2 <- NULL
+for(i in 1:100) {
+  FirstRun2 = mice(data = gambia, m = 5, meth = "norm", maxit = 5, printFlag = F) #First imputation
+  Bednet_Imputations2 = FirstRun2$imp$BEDNET
+  #Append imputed columns to the gambia data set
+  gambia$Imp11 = gambia$BEDNET
+  gambia$Imp11[-ind] = Bednet_Imputations2[,1]
+  
+  gambia$Imp21 = gambia$BEDNET
+  gambia$Imp21[-ind] = Bednet_Imputations2[,2]
+  
+  gambia$Imp31 = gambia$BEDNET
+  gambia$Imp31[-ind] = Bednet_Imputations2[,3]
+  
+  gambia$Imp41 = gambia$BEDNET
+  gambia$Imp41[-ind] = Bednet_Imputations2[,4]
+  
+  gambia$Imp51 = gambia$BEDNET
+  gambia$Imp51[-ind] = Bednet_Imputations2[,5]
+  
+  
+  #Split into training and test
+  training2 = sample_frac(gambia, .7) #Split into a training
+  training_samp2 = as.numeric(row.names(training))
+  test2 = gambia[-training_samp2, ] #Get the test set
+  #Construct 5 models on the training data
+  TrM12 = glm(data = training2, Y ~ AGE + GREEN + PHC + Imp11, family = "binomial")
+  TrM22 = glm(data = training2, Y ~ AGE + GREEN + PHC + Imp21, family = "binomial")
+  TrM32 = glm(data = training2, Y ~ AGE + GREEN + PHC + Imp31, family = "binomial")
+  TrM42 = glm(data = training2, Y ~ AGE + GREEN + PHC + Imp41, family = "binomial")
+  TrM52 = glm(data = training2, Y ~ AGE + GREEN + PHC + Imp51, family = "binomial")
+  
+  #Need to predict
+  pred.val.11 = round(predict(TrM12, test, type = "response"))
+  pred.val.21 = round(predict(TrM22, test, type = "response"))
+  pred.val.31 = round(predict(TrM32, test, type = "response"))
+  pred.val.41 = round(predict(TrM42, test, type = "response"))
+  pred.val.51 = round(predict(TrM52, test, type = "response"))
+  
+  y_true <- test$Y
+TEST_ACCURACY2 <- rbind(TEST_ACCURACY2, c(mean(y_true == pred.val.11), mean(y_true == pred.val.21), mean(y_true == pred.val.31), mean(y_true == pred.val.41), mean(y_true == pred.val.51)))  
+}
+
+apply(TEST_ACCURACY2, 2, mean)
+```
+
+
+For this stage of the project, we wanted to choose a method of imputation for our data. We tested 3 methods, 1 of which pertained to clustering and 2 of which were implemented through the "mice" package. For the methods implemented through the "mice" package, 100 iterations of 5 imputations were run in order for the estimates to converge. The estimated malaria indicator values were then compared to the real malaria indicator values to test for accuracy. 
 
