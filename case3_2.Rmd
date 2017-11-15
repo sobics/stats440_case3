@@ -28,7 +28,7 @@ GREEN: a measure of how much greenery is around the child's village, derived fro
 PHC: indicator for the presence of a public health clinic in the child's village (1 = yes)-->
 
 #Model Overview
-Before creating a robust model that predicts the presence of malaria in child's blood stream, it is important to imputate the missing data well. Three different methods in missing were tested (Clustering & 2 methods within the MICE package) and compared to assess the best way to imputate the missing data.  
+Before creating a robust model that predicts the presence of malaria in child's blood stream, it is important to imputate the missing data well. Three different methods in missing were tested (Clustering & 2 methods within the MICE package) and compared by modeling the imputated data as a logistic regression. The fitted models were compared in prediction accuracy of the presence of malaria to assess the best way to imputate the missing data.  
 
 #K-Means Clustering Data Missing Data 
 
@@ -61,7 +61,13 @@ ggplot(gambia, aes(jitter(GREEN), jitter(PHC), color = as.factor(g_cluster$clust
 
 ```
 
-Above is graph of the different clusters--since the features are mainly categorical, some of the clusters were hidden, so the features were jittered to show the different clusters.
+Above is graph of the different clusters--since the features are mainly categorical, some of the clusters were hidden, so the features were jittered to show the different clusters.Below is a table of that shows the count of children who have and do not have a $BEDNET$ after imputating the missing data via clustering.
+
+```{r echo = F}
+ze <- rbind(table(gambia$impBEDNET_combine), table(gambia$impBEDNET)) 
+colnames(ze) <- c("No Bednet", "Has Bednet")
+kable(ze[-2,])
+```
 
 The gambia data set was split into test and training data to assess the fit of the model and missing dat imputation, where 70% of the full dataset was training and 30% was the test data. After iterating through the k-means clustering method to impute the missing data and then predicting the Y response via logit regression 100 times, the model predicted the correct test data on average, `r mean(code4kids)*100`% of the time. 
 
@@ -69,10 +75,10 @@ The gambia data set was split into test and training data to assess the fit of t
 To assess the fit of the missing data clusters, the true values of the non-missing $BEDNET$ observations were compared to the predicted values of $BEDNET$ obtained from the clusters. The clusters labeled the correct $BEDNET$ value `r round(mean(gambia$BEDNET[ind] == gambia$impBEDNET[ind]) *100,2)`% of the time.   
 
 #Using Mice Package to Imputate Data
-For the methods implemented through the "mice" package, 100 iterations of 5 imputations were run in order for the estimates to converge. The estimated malaria indicator values were then compared to the real malaria indicator values to test for accuracy. Below is an overview of each method:
+Two methods within the Mice Package were used to imputate the missing data in $BEDNET$. For the methods implemented through the "mice" package, 100 iterations of 5 imputations were run in order for the estimates to converge. The estimated malaria indicator values were then compared to the real malaria indicator values to test for accuracy. Below is an overview of each method:
 
 ##Part I: Mice with Predictive Mean Matching ("PMM")
-```{r echo = F}
+```{r echo = F, include = F}
 sum(is.na(gambia$BEDNET))/nrow(gambia) #More diagnostics; just checking missing
 #data 
 for (col in 1:ncol(gambia)){
@@ -81,7 +87,6 @@ for (col in 1:ncol(gambia)){
 md.pattern(gambia)
 FirstRun = mice(data = gambia, m = 5, meth = "pmm", maxit = 5, printFlag = F) #First imputation
 Bednet_Imputations = FirstRun$imp$BEDNET #Get the imputed columns
-
 
 ```
 
@@ -131,8 +136,15 @@ for(i in 1:100) {
 TEST_ACCURACY <- rbind(TEST_ACCURACY, c(mean(y_true == pred.val.1), mean(y_true == pred.val.2), mean(y_true == pred.val.3), mean(y_true == pred.val.4), mean(y_true == pred.val.5)))  
 }
 
-apply(TEST_ACCURACY, 2, mean)
 ```
+Below is a table of that shows the count of children who have and do not have a $BEDNET$ after imputating the data via predictive mean matching 5 times.
+```{r echo = F}
+one <- rbind(table(gambia$Imp1), table(gambia$Imp2), table(gambia$Imp3), table(gambia$Imp4), table(gambia$Imp5)) 
+colnames(one) <- c("No Bednet", "Has Bednet")
+kable(one)
+```
+
+After 100 iterations, the model with the missing data imputated via price mean matching predicted the true test data set on average, `r round(mean(apply(TEST_ACCURACY, 2, mean)) * 100,2)`% of the time.
 
 #Part II: Mice with Bayesian Linear Regression
 ```{r echo = F}
@@ -179,11 +191,21 @@ for(i in 1:100) {
 TEST_ACCURACY2 <- rbind(TEST_ACCURACY2, c(mean(y_true == pred.val.11), mean(y_true == pred.val.21), mean(y_true == pred.val.31), mean(y_true == pred.val.41), mean(y_true == pred.val.51)))  
 }
 
-apply(TEST_ACCURACY2, 2, mean)
 ```
 
+Below is a table of that shows the count of children who have and do not have a $BEDNET$ after imputating the data via Bayesian linear regression 5 times.
+```{r echo = F, warning = F}
+toe <- rbind(table(round(gambia$Imp11)), table(round(gambia$Imp21)), table(round(gambia$Imp31)), table(round(gambia$Imp41)), table(round(gambia$Imp51))) 
+colnames(toe) <- c("Bad Value", "No Bednet", "Has Bednet", "Bad Value")
+kable(toe)
+```
+
+The table has values that are implausible (-1, 2), although a small subset of the data for some imputations.
+
+After 100 iterations, the model with the missing data imputated via price mean matching predicted the true test data set on average, `r round(mean(apply(TEST_ACCURACY2, 2, mean)),2) * 100`% of the time.
+
 Between the two "mice" methods, both imputations schemes were similar, but the
-Bayesian linear regression method was slighlty better. For now, we will move 
+Bayesian linear regression method was slighlty better in predicting the true test data. However, as noted by the table, the imputated data produced values that were not possible (-1,2), which would make interpreting the data difficult. If the end goal is prediction accuracy, then Bayesian linear regression may be the best option. For now, we will move 
 forward with this imputation scheme. Depending on the diagnostics of future 
 models, we may opt to try alternative imputation methods. 
 
@@ -199,4 +221,4 @@ FirstTrial = glm(data = gambia, Y ~ AGE + GREEN + PHC + Imp51, family = "binomia
 summary(FirstTrial)
 ```
 
-The above model is neither a finalized version nor a fully diagnosed model, but it represents part of what we hope to achieve. In this case, we replaced the variable $BEDNET$ with an imputation scheme we were satisfied with for the time being. We still want to leverage a training set and a test set in the future, and we also want to continue to improve our imputation scheme for the $BEDNET$ variable. 
+The above model is neither a finalized version nor a fully diagnosed model, but it represents part of what we hope to achieve. In this case, we replaced the variable $BEDNET$ with an imputation scheme we were satisfied with for the time being. We still want to leverage a training set and a test set in the future, and we also want to continue to improve our imputation scheme for the $BEDNET$ variable.  
