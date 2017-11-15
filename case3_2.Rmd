@@ -202,7 +202,7 @@ kable(toe)
 
 The table has values that are implausible (-1, 2), although a small subset of the data for some imputations.
 
-After 100 iterations, the model with the missing data imputated via price mean matching predicted the true test data set on average, `r round(mean(apply(TEST_ACCURACY2, 2, mean)),2) * 100`% of the time.
+After 100 iterations, the model with the missing data imputated via price mean matching predicted the true test data set on average, `r round(mean(apply(TEST_ACCURACY2, 2, mean)) * 100,2)`% of the time.
 
 Between the two "mice" methods, both imputations schemes were similar, but the
 Bayesian linear regression method was slighlty better in predicting the true test data. However, as noted by the table, the imputated data produced values that were not possible (-1,2), which would make interpreting the data difficult. If the end goal is prediction accuracy, then Bayesian linear regression may be the best option. For now, we will move 
