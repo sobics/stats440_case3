@@ -57,7 +57,7 @@ for( i in 1:100) {
 
 ```{r echo = F}
 #clustering graph
-ggplot(gambia, aes(jitter(GREEN), jitter(PHC), color = as.factor(g_cluster$cluster))) + geom_point()
+ggplot(gambia, aes(jitter(GREEN), jitter(PHC), color = as.factor(g_cluster$cluster))) + xlab("GREEN") + ylab("PHC") + geom_point() + ggtitle("GREEN vs. PHC") + labs(color='cluster') + theme_bw()
 
 ```
 Above is graph of the different clusters--since the features are mainly categorical, some of the clusters were hidden, so the features were jittered to show the different clusters.
