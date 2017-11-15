@@ -171,6 +171,12 @@ TEST_ACCURACY2 <- rbind(TEST_ACCURACY2, c(mean(y_true == pred.val.11), mean(y_tr
 apply(TEST_ACCURACY2, 2, mean)
 ```
 
-Between the two "mice" methods, both imputations schemes were similar, but the Bayesian linear regression method was slighlty better. For now, we will move forward with this imputation scheme. Depending on the diagnostics of future models, we may opt to try alternative imputation schemes. 
+Between the two "mice" methods, both imputations schemes were similar, but the
+Bayesian linear regression method was slighlty better. For now, we will move 
+forward with this imputation scheme. Depending on the diagnostics of future 
+models, we may opt to try alternative imputation methods. 
 
-
+To better make use of our Bayesian linear regression method, we may conduct
+research to see if any sort of prior distribution on the prescence of bed nets 
+can be leveraged in our analysis. Hopefully this will lead to better performance 
+of the imputation accuracy. 
