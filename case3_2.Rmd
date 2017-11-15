@@ -190,3 +190,12 @@ To better make use of our Bayesian linear regression method, we may conduct
 research to see if any sort of prior distribution on the prescence of bed nets 
 can be leveraged in our analysis. Hopefully this will lead to better performance 
 of the imputation accuracy. 
+
+#Example Model
+
+```{r}
+FirstTrial = glm(data = gambia, Y ~ AGE + GREEN + PHC + Imp51, family = "binomial")
+summary(FirstTrial)
+```
+
+The above model is neither a finalized version nor a fully diagnosed model, but it represents part of what we hope to achieve. In this case, we replaced the variable $BEDNET$ with an imputation scheme we were satisfied with for the time being. We still want to leverage a training set and a test set in the future, and we also want to continue to improve our imputation scheme for the $BEDNET$ variable. 
