@@ -1,5 +1,5 @@
 ---
-title: "case3_2"
+title: "Case 3 Part 2"
 author: "Sonia Xu, Vinai Oddiraju"
 date: "November 13, 2017"
 output:
@@ -30,7 +30,7 @@ PHC: indicator for the presence of a public health clinic in the child's village
 #Model Overview
 Before creating a robust model that predicts the presence of malaria in child's blood stream, it is important to imputate the missing data well. Three different methods in missing were tested (Clustering & 2 methods within the MICE package) and compared to assess the best way to imputate the missing data.  
 
-#Clustering Data and Imputating Missing Data Based on Similar Characteristics
+#K-Means Clustering Data Missing Data 
 
 To fill in the missing data in $BEDNET$, it is assumed that children who share similar features have a simlar $BEDNET$ history. Each observation was thus clustered on their other features (i.e. $GREEN$), and separated into groups via k-means clustering with 10 groups. 10 groups were chosen because this was the highest number of groups that maintained at least 30 observations for each group, which would ensure a large enough sample size for estimation. Missing $BEDNET$ observations were imputated with the mean of each cluster. 
 
@@ -60,6 +60,7 @@ for( i in 1:100) {
 ggplot(gambia, aes(jitter(GREEN), jitter(PHC), color = as.factor(g_cluster$cluster))) + xlab("GREEN") + ylab("PHC") + geom_point() + ggtitle("GREEN vs. PHC") + labs(color='cluster') + theme_bw()
 
 ```
+
 Above is graph of the different clusters--since the features are mainly categorical, some of the clusters were hidden, so the features were jittered to show the different clusters.
 
 The gambia data set was split into test and training data to assess the fit of the model and missing dat imputation, where 70% of the full dataset was training and 30% was the test data. After iterating through the k-means clustering method to impute the missing data and then predicting the Y response via logit regression 100 times, the model predicted the correct test data on average, `r mean(code4kids)*100`% of the time. 
@@ -187,7 +188,7 @@ forward with this imputation scheme. Depending on the diagnostics of future
 models, we may opt to try alternative imputation methods. 
 
 To better make use of our Bayesian linear regression method, we may conduct
-research to see if any sort of prior distribution on the prescence of bed nets 
+research to see if any sort of prior distribution on the presence of bed nets 
 can be leveraged in our analysis. Hopefully this will lead to better performance 
 of the imputation accuracy. 
 
