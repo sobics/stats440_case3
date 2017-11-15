@@ -160,11 +160,11 @@ for(i in 1:100) {
   TrM52 = glm(data = training2, Y ~ AGE + GREEN + PHC + Imp51, family = "binomial")
   
   #Need to predict
-  pred.val.11 = round(predict(TrM12, test, type = "response"))
-  pred.val.21 = round(predict(TrM22, test, type = "response"))
-  pred.val.31 = round(predict(TrM32, test, type = "response"))
-  pred.val.41 = round(predict(TrM42, test, type = "response"))
-  pred.val.51 = round(predict(TrM52, test, type = "response"))
+  pred.val.11 = round(predict(TrM12, test2, type = "response"))
+  pred.val.21 = round(predict(TrM22, test2, type = "response"))
+  pred.val.31 = round(predict(TrM32, test2, type = "response"))
+  pred.val.41 = round(predict(TrM42, test2, type = "response"))
+  pred.val.51 = round(predict(TrM52, test2, type = "response"))
   
   y_true <- test$Y
 TEST_ACCURACY2 <- rbind(TEST_ACCURACY2, c(mean(y_true == pred.val.11), mean(y_true == pred.val.21), mean(y_true == pred.val.31), mean(y_true == pred.val.41), mean(y_true == pred.val.51)))  
@@ -173,6 +173,6 @@ TEST_ACCURACY2 <- rbind(TEST_ACCURACY2, c(mean(y_true == pred.val.11), mean(y_tr
 apply(TEST_ACCURACY2, 2, mean)
 ```
 
-
+Between the two "mice" methods, both imputations schemes were similar, but the Bayesian linear regression method was slighlty better. For now, we will move forward with this imputation scheme. Depending on the diagnostics of future models, we may opt to try alternative imputation schemes. 
 
 
