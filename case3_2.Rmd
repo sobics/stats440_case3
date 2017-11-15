@@ -32,7 +32,7 @@ Before creating a robust model that predicts the presence of malaria in child's 
 
 #Clustering Data and Imputating Missing Data Based on Similar Characteristics
 
-To fill in the missing data in $BEDNET$, it is assumed that children who share similar features have a simlar $BEDNET$ history. Each observation was thus clustered on their other features (i.e. $GREEN$), and separated into groups via k-means clustering with 10 groups. 10 groups were chosen because this was the highest number of groups that maintained at least 30 observations for each group, which would ensure a large enough sample size for estimation. Missing $BEDNET$ observations were imputated with the mean of each cluster.    
+To fill in the missing data in $BEDNET$, it is assumed that children who share similar features have a simlar $BEDNET$ history. Each observation was thus clustered on their other features (i.e. $GREEN$), and separated into groups via k-means clustering with 10 groups. 10 groups were chosen because this was the highest number of groups that maintained at least 30 observations for each group, which would ensure a large enough sample size for estimation. Missing $BEDNET$ observations were imputated with the mean of each cluster. 
 
 ```{r echo = F}
 code4kids <- NULL
@@ -54,6 +54,14 @@ for( i in 1:100) {
 }
 
 ```
+
+```{r echo = F}
+#clustering graph
+ggplot(gambia, aes(jitter(GREEN), jitter(PHC), color = as.factor(g_cluster$cluster))) + geom_point()
+
+```
+Above is graph of the different clusters--since the features are mainly categorical, some of the clusters were hidden, so the features were jittered to show the different clusters.
+
 The gambia data set was split into test and training data to assess the fit of the model and missing dat imputation, where 70% of the full dataset was training and 30% was the test data. After iterating through the k-means clustering method to impute the missing data and then predicting the Y response via logit regression 100 times, the model predicted the correct test data on average, `r mean(code4kids)*100`% of the time. 
 
 #Assessing Missing Data Imputation with Clustering
