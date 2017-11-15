@@ -16,8 +16,17 @@ library(cluster)
 #read in the data set
 gambia <-read.csv("gambiaMissing.csv")
 ```
-#Overview
-Before creating a robust model that predicts the presence of malaria in child's blood stream, it is important to imputate the missing data well. Two different methods in missing were tested (Clustering & MICE) and compared to assess the best way to imputate the missing data. Below is an overview of each method: 
+#Problem Overview:
+Data from a study of malaria prevalence in Gambia was collected to assess which characteristics were significant in predicting the presence of malaria parasites in a blood sample of a child. However, missing data within the feature, $BEDNET$, an indicator of whether the child has a net over his or her bed, has created a challenge for fully analyzing and understanding the dataset. The purpose of this paper is to determine the best way to imputate the missing data in $BEDNET$ in order to create the best predictive model. Once the best fit model has been determined, the model will be used to determine to what extent each feature affects the  probability of a child containing any presence of malaria parasites in their blood sample. 
+<!-- The data come from a study of malaria prevalence in Gambia. Each observation corresponds to one child who has been tested for the presence of malaria. The response Y is an indicator of whether malaria parasites were found in a blood sample from the child. The predictors are
+
+AGE: age of the child, in years
+BEDNET: indicator of whether the child has a net over his or her bed (1 = yes)
+GREEN: a measure of how much greenery is around the child's village, derived from satellite images (units are arbitrary)
+PHC: indicator for the presence of a public health clinic in the child's village (1 = yes)-->
+
+#Model Overview
+Before creating a robust model that predicts the presence of malaria in child's blood stream, it is important to imputate the missing data well. Three different methods in missing were tested (Clustering & 2 methods within the MICE package) and compared to assess the best way to imputate the missing data.  
 
 #Clustering Data and Imputating Missing Data Based on Similar Characteristics
 
@@ -45,11 +54,14 @@ for( i in 1:100) {
 ```
 The gambia data set was split into test and training data to assess the fit of the model and missing dat imputation, where 70% of the full dataset was training and 30% was the test data. After iterating through the k-means clustering method to impute the missing data and then predicting the Y response via logit regression 100 times, the model predicted the correct test data on average, `r mean(code4kids)*100`% of the time. 
 
-#Assessing Missing Data Imputation Method
+#Assessing Missing Data Imputation with Clustering
 To assess the fit of the missing data clusters, the true values of the non-missing $BEDNET$ observations were compared to the predicted values of $BEDNET$ obtained from the clusters. The clusters labeled the correct $BEDNET$ value `r round(mean(gambia$BEDNET[ind] == gambia$impBEDNET[ind]) *100,2)`% of the time.   
 
-#Using "mice" Package to Impute Data
-```{r}
+#Using Mice Package to Imputate Data
+For the methods implemented through the "mice" package, 100 iterations of 5 imputations were run in order for the estimates to converge. The estimated malaria indicator values were then compared to the real malaria indicator values to test for accuracy. Below is an overview of each method:
+
+##Part I: Mice with Predictive Mean Matching ("PMM")
+```{r echo = F}
 sum(is.na(gambia$BEDNET))/nrow(gambia) #More diagnostics; just checking missing
 #data 
 for (col in 1:ncol(gambia)){
@@ -62,9 +74,9 @@ Bednet_Imputations = FirstRun$imp$BEDNET #Get the imputed columns
 
 ```
 
-#Impute data, fit model, generate parameter estimates 
 
-```{r}
+```{r echo = F}
+#Impute data, fit model, generate parameter estimates 
 TEST_ACCURACY <- NULL
 for(i in 1:100) {
   FirstRun = mice(data = gambia, m = 5, meth = "pmm", maxit = 5, printFlag = F) #First imputation
@@ -111,7 +123,8 @@ TEST_ACCURACY <- rbind(TEST_ACCURACY, c(mean(y_true == pred.val.1), mean(y_true 
 apply(TEST_ACCURACY, 2, mean)
 ```
 
-```{r}
+#Part II: Mice with Bayesian Linear Regression
+```{r echo = F}
 TEST_ACCURACY2 <- NULL
 for(i in 1:100) {
   FirstRun2 = mice(data = gambia, m = 5, meth = "norm", maxit = 5, printFlag = F) #First imputation
@@ -159,5 +172,5 @@ apply(TEST_ACCURACY2, 2, mean)
 ```
 
 
-For this stage of the project, we wanted to choose a method of imputation for our data. We tested 3 methods, 1 of which pertained to clustering and 2 of which were implemented through the "mice" package. For the methods implemented through the "mice" package, 100 iterations of 5 imputations were run in order for the estimates to converge. The estimated malaria indicator values were then compared to the real malaria indicator values to test for accuracy. 
+
 
